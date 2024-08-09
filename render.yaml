@@ -8,7 +8,7 @@ services:
     startCommand: python3 ser.py & python3 main.py 
     region: frankfurt
     envVars:
-      - key: ALIVE_NAME
+      - key: TELEGRAM_TOKEN
         sync: false
-      - key: APP_ID 
+      - key: GOOGLE_API_KEY 
         sync: false
