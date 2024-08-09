@@ -2,3 +2,6 @@ python-telegram-bot
 pyTelegramBotAPI
 google-generativeai
 aiohttp
+genai
+datetime
+requests
