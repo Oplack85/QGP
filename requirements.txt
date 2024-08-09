@@ -1,8 +1,4 @@
-python-telegram-bot
-pyTelegramBotAPI
-google-generativeai
-aiohttp
-datetime
-requests
-Flask
-flask_restful
+Flask==2.2.3
+python-telegram-bot==20.1
+google-generativeai==0.1.0
+gunicorn==20.1.0
