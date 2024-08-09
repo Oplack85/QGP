@@ -1,46 +1,49 @@
 import google.generativeai as genai
 import telebot
 import datetime
+import os
 from telebot import types
 
 # Set up Google Generative AI
-genai.configure(api_key="AIzaSyBtv6W1BL7GrcQD14P07nKdG50vHucNouU")
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Define the model generation configuration
 generation_config = {
-  "temperature": 0.9,
-  "top_p": 1,
-  "top_k": 1,
-  "max_output_tokens": 2048,
+    "temperature": 0.9,
+    "top_p": 1,
+    "top_k": 1,
+    "max_output_tokens": 2048,
 }
 
 # Define the safety settings for the model
 safety_settings = [
-  {
-    "category": "HARM_CATEGORY_HARASSMENT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
-  {
-    "category": "HARM_CATEGORY_HATE_SPEECH",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
-  {
-    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
-  {
-    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-  },
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
 ]
 
 # Create the Generative Model instance
-model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
-               generation_config=generation_config,
-               safety_settings=safety_settings)
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-pro-latest",
+    generation_config=generation_config,
+    safety_settings=safety_settings
+)
 
 # Set up Telegram bot
-token = "7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo"
+token = os.getenv("TELEGRAM_TOKEN")
 bot = telebot.TeleBot(token)
 
 # Handle '/start' command to send a welcome message
@@ -93,14 +96,12 @@ def echo_message(message):
         # Add information about Palestine (Add specific handling if required)
         elif any(phrase in user_message for phrase in ["كيف حالك", "كيف انت"]):
             bot.send_message(message.chat.id, "*العقرب:*\n*انا بخير والحمد لله وانت كيف حالك .*", parse_mode='Markdown')
-            
 
         # Add information about Israel (Add specific handling if required)
 
         # Add information about the source
         elif any(phrase in user_message for phrase in ["سورس العقرب", "العقرب"]):
             bot.send_message(message.chat.id, "*العقرب:*\n*اقوى سورس تلغرام عربي.*", parse_mode='Markdown')
-
 
         else:
             # Send the generated response back to the user
