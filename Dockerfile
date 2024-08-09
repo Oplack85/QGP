@@ -1,12 +1,19 @@
-FROM python:latest
+FROM python:3.12-alpine as builder
 
-RUN apt-get update -y && apt-get upgrade -y
+RUN pip install --upgrade pip
 
-RUN pip3 install -U pip
+COPY requirements.txt /tmp/requirements.txt
 
-COPY . /app/
-WORKDIR /app/
-RUN python -m pip install -r requirements.txt
-RUN pip install --upgrade google-generativeai
-RUN pip install torch torchvision torchaudio
-CMD bash start
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+
+FROM python:3.12-alpine as base
+
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+COPY . /app
+
+WORKDIR /app
+
+ENTRYPOINT ["python", "main.py"]
