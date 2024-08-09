@@ -3,6 +3,10 @@ import telebot
 import datetime
 import os
 from telebot import types
+from flask import Flask, request
+
+# Initialize Flask app
+app = Flask(__name__)
 
 # Set up Google Generative AI
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -45,6 +49,14 @@ model = genai.GenerativeModel(
 # Set up Telegram bot
 token = os.getenv("TELEGRAM_TOKEN")
 bot = telebot.TeleBot(token)
+
+# Define webhook endpoint
+@app.route(f'/{token}', methods=['POST'])
+def webhook():
+    json_str = request.get_data(as_text=True)
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return '', 200
 
 # Handle '/start' command to send a welcome message
 @bot.message_handler(commands=['start'])
@@ -115,5 +127,12 @@ def echo_message(message):
         bot.send_message(message.chat.id, "*العقرب:*\n\n*عذراً، لا يمكنني الإجابة على سؤالك.*", parse_mode='Markdown')
         bot.delete_message(message.chat.id, message_id)
 
-# Start the bot
-bot.polling()
+# Set webhook
+def set_webhook():
+    webhook_url = f"https://<your-heroku-app-name>.herokuapp.com/{token}"
+    bot.remove_webhook()
+    bot.set_webhook(url=webhook_url)
+
+if __name__ == "__main__":
+    set_webhook()
+    app.run(host='0.0.0.0', port=int(os.getenv("PORT", 5000)))
