@@ -1,4 +1,5 @@
 python-telegram-bot
 pyTelegramBotAPI
 google-generativeai==0.2.0
+GenerativeModel
 aiohttp
