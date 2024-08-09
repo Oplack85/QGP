@@ -1,0 +1,13 @@
+pip install openai
+# إنشاء بيئة افتراضية
+python -m venv myenv
+
+# تفعيل البيئة الافتراضية
+# على نظام Windows
+myenv\Scripts\activate
+
+# على نظام macOS/Linux
+source myenv/bin/activate
+
+# تثبيت مكتبة openai
+python main.py
