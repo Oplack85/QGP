@@ -4,7 +4,7 @@ import datetime
 from telebot import types
 
 # Set up Google Generative AI
-genai.configure(api_key="AIzaSyCTvRm2_sXpBXsR9MTjR7s8W7EiFySAEiA")
+genai.configure(api_key="AIzaSyAbmnaZR3v8w4TAZSto_j8-Dh3PExhtdPM")
 
 # Define the model generation configuration
 generation_config = {
