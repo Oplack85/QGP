@@ -1,2 +1,2 @@
-gcloud app deploy
+gcloud run deploy my-python-app
 python3 main.py
