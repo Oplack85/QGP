@@ -8,4 +8,5 @@ RUN apt-get install -y nodejs
 RUN npm i -g npm@8.19.4
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN pip install -r requirements.txt
+RUN poetry run python main.py
 CMD python3 main.py
