@@ -1,13 +1,16 @@
-FROM python:3.10-alpine as builder
+FROM python:3.10-alpine
 
-RUN pip install --upgrade pip
+# تثبيت Poetry
+RUN pip install poetry
 
-COPY requirements.txt /tmp/requirements.txt
-
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
-
-COPY . /app
-
+# تعيين مسار العمل داخل الحاوية
 WORKDIR /app
 
-ENTRYPOINT ["python", "main.py"]
+# نسخ ملفات المشروع إلى الحاوية
+COPY . /app
+
+# تثبيت التبعيات باستخدام Poetry
+RUN poetry install
+
+# الأمر الذي سيشغل التطبيق
+CMD ["poetry", "run", "python", "main.py"]
