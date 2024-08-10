@@ -1,5 +1,5 @@
 Flask==2.2.3
-telebot
-python-telegram-bot==20.1
-google-generativeai
-gunicorn==20.1.0
+telebot==0.0.5
+xds-protos==1.60.0
+google-generativeai==0.7.2
+pytelegrambotapi==4.22.0
