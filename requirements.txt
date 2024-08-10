@@ -1,6 +1,5 @@
-Flask==2.2.3
-telebot==0.0.5
-xds-protos==1.60.0
-google-generativeai==0.7.2
-pytelegrambotapi==4.22.0
+Flask
+telebot
+xds-protos
+pytelegrambotapi
 git+https://github.com/google-gemini/generative-ai-python.git
