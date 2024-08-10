@@ -1,5 +1,4 @@
-FROM python:3.10-alpine
-
+FROM python:3.10.14-slim
 # تثبيت Poetry
 RUN pip install poetry
 
