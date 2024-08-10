@@ -1,5 +1,4 @@
 Flask==2.2.3
-pyright-extended==2.0.11
 telebot==0.0.5
 xds-protos==1.60.0
 google-generativeai==0.7.2
