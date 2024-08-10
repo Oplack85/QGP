@@ -1,6 +1,4 @@
-Flask
+os
 telebot
-xds-protos
-pytelegrambotapi
-poetry
-git+https://github.com/google-gemini/generative-ai-python.git
+datetime
+google-generativeai
