@@ -12,4 +12,4 @@ COPY . /app
 RUN poetry install
 
 # الأمر الذي سيشغل التطبيق
-CMD ["poetry", "run", "python", "main.py"]
+CMD ["poetry", "run", "python3", "main.py"]
