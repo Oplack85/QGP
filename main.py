@@ -154,7 +154,7 @@ async def make_new_gemini_pro_convo():
 
     def create_convo():
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro",
+            model_name="gemini-pro",
             generation_config=generation_config,
             safety_settings=safety_settings,
         )
@@ -239,7 +239,7 @@ async def main():
         commands=[
             telebot.types.BotCommand("start", "لتشغيل البوت "),
             telebot.types.BotCommand("gemini", "لأستخدام اصدار Gemini 1.5 flash"),
-            telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار Gemini 1.5 pro"),
+            telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار Gemini pro"),
             telebot.types.BotCommand("clear", "لمسح سجل الاسئلة"),
             telebot.types.BotCommand("switch","لمعرفة الاصدار المستخدم")
         ],
