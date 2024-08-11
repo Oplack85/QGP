@@ -193,7 +193,7 @@ async def gemini(bot,message,m):
         sent_message = await bot.reply_to(message, before_generate_info)
         await send_message(player, m)
         try:
-            await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
+            await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="Markdown")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
 
@@ -214,7 +214,7 @@ async def gemini_pro(bot,message,m):
         sent_message = await bot.reply_to(message, before_generate_info)
         await send_message(player, m)
         try:
-            await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
+            await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="Markdown")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
 
@@ -250,7 +250,7 @@ async def main():
     @bot.message_handler(commands=["start"])
     async def gemini_handler(message: Message):
         try:
-            await bot.reply_to( message , escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n*✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁*\n\n*تم التصنيع بواسطة* \n*المطور* [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n*المطور* [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n*✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁*\n\n*تم التصنيع بواسطة* \n*المطور* [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n*المطور* [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"), parse_mode="Markdown")
         except IndexError:
             await bot.reply_to(message, error_info)
 
@@ -259,7 +259,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Flash ✓*"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Flash ✓*"), parse_mode="Markdown")
             return
         await gemini(bot,message,m)
 
@@ -268,7 +268,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Pro ✓*"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Pro ✓*"), parse_mode="Markdown")
             return
         await gemini_pro(bot,message,m)
             
@@ -367,4 +367,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-        
