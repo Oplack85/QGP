@@ -1,67 +1,46 @@
-import telebot
-import openai
-import time
+from telegram.ext import Updater, CommandHandler, CallbackContext
+import requests
 
-bot = telebot.TeleBot("7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo")
-openai.api_key = "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"
-model = "davinci:ft-personal:gpt-4o-mini"
-stop_symbols = "###"
+# استبدل بالرمز السري الخاص بالبوت من BotFather
+TELEGRAM_TOKEN = '7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo'
+# استبدل بمفتاح API الخاص بـ Google Generative Language
+GOOGLE_API_KEY = 'AIzaSyBytHaZDwFzOhtsvDXJOOX7p2WCs7-jWC0'
+GOOGLE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent'
 
-users = {}
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Hello! Send me a text and I will explain how AI works using Google Generative Language API.')
 
+def explain(update: Update, context: CallbackContext) -> None:
+    user_input = ' '.join(context.args)
+    if not user_input:
+        update.message.reply_text('Please provide a text to explain.')
+        return
 
-def _get_user(id):
-    user = users.get(id, {'id': id, 'last_text': '', 'last_prompt_time': 0})
-    users[id] = user
-    return user
+    # إرسال الطلب إلى API
+    response = requests.post(
+        GOOGLE_API_URL,
+        headers={'Content-Type': 'application/json'},
+        json={'contents': [{'parts': [{'text': user_input}]}]},
+        params={'key': GOOGLE_API_KEY}
+    )
 
-
-def _process_rq(user_id, rq):
-    user = _get_user(user_id)
-    last_text = user['last_text']
-    # if last prompt time > 10 minutes ago - drop context
-    if time.time() - user['last_prompt_time'] > 600:
-        last_text = ''
-        user['last_prompt_time'] = 0
-        user['last_text'] = ''
-
-    if rq and len(rq) > 0 and len(rq) < 1000:
-        print(f">>> ({user_id}) {rq}")
-
-        # truncate to 1000 symbols from the end
-        prompt = f"{last_text}Q: {rq} ->"[-1000:]
-        print("Sending to OpenAI: " + prompt)
-        completion = openai.Completion.create(
-            engine=model, prompt=prompt, max_tokens=256, stop=[stop_symbols], temperature=0.7)
-        eng_ans = completion['choices'][0]['text'].strip()
-        if "->" in eng_ans:
-            eng_ans = eng_ans.split("->")[0].strip()
-        ans = eng_ans
-        print(f"<<< ({user_id}) {ans}")
-        user['last_text'] = prompt + " " + eng_ans + stop_symbols
-        user['last_prompt_time'] = time.time()
-        return ans
+    if response.status_code == 200:
+        result = response.json()
+        explanation = result['contents'][0]['parts'][0]['text']
+        update.message.reply_text(explanation)
     else:
-        user['last_prompt_time'] = 0
-        user['last_text'] = ''
-        return "!!! Error! Please use simple short texts"
+        update.message.reply_text('Failed to get a response from the API.')
 
+def main() -> None:
+    updater = Updater(TELEGRAM_TOKEN)
 
-@bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
-    user = _get_user(message.from_user.id)
-    user['last_prompt_time'] = 0
-    user['last_text'] = ''
-    bot.reply_to(message, f"Started! (History cleared). Using model {model}")
+    dispatcher = updater.dispatcher
 
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(CommandHandler('explain', explain))
 
-@bot.message_handler(func=lambda message: True)
-def echo_all(message):
-    user_id = message.from_user.id
-    rq = message.text
-    ans = _process_rq(user_id, rq)
-    bot.send_message(message.chat.id, ans)
-
+    updater.start_polling()
+    updater.idle()
 
 if __name__ == '__main__':
-    bot.polling()
+    main()
