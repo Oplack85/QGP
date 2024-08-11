@@ -17,10 +17,10 @@ download_pic_notify="✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲  �
 n = 30  #Number of historical records to keep
 
 generation_config = {
-    "temperature": 1,
-    "top_p": 1,
-    "top_k": 1,
-    "max_output_tokens": 2048,
+    "temperature": 1.2,
+    "top_p": 0.9,
+    "top_k": 50,
+    "max_output_tokens": 4096,
 }
 
 safety_settings = [
