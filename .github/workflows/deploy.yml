@@ -25,7 +25,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run the main
-      run: python main.py
+      run: bash start
       env:
         GOOGLE_GEMINI_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
         TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_BOT_API_KEY }}
