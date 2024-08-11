@@ -264,7 +264,7 @@ async def main():
         await gemini(bot,message,m)
 
     @bot.message_handler(commands=["Pro"])
-    async def gemini_pro_handler(message: Message):
+    async def gemini_handler(message: Message):
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
