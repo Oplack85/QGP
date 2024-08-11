@@ -1,15 +1,7 @@
-FROM python:3.10
-
-# تعيين دليل العمل
+FROM python:3.9.18-slim-bullseye
 WORKDIR /app
-
-# نسخ ملفات المشروع
-COPY pyproject.toml poetry.lock* /app/
-RUN pip install poetry
-RUN poetry install --no-root
-
-# نسخ باقي الملفات
-COPY . /app/
-
-# تشغيل السكربت
-CMD ["poetry", "run", "python", "main.py"]
+COPY ./ /app/
+RUN pip install --no-cache-dir -r requirements.txt
+ENV TELEGRAM_BOT_API_KEY=""
+ENV GEMINI_API_KEYS=""
+CMD ["sh", "-c", "python main.py ${TELEGRAM_BOT_API_KEY} ${GEMINI_API_KEYS}"]
