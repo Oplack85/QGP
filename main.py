@@ -11,6 +11,9 @@ gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
 
+tg_token = "7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo"
+GOOGLE_GEMINI_KEY = "AIzaSyBytHaZDwFzOhtsvDXJOOX7p2WCs7-jWC0"
+
 error_info="⚠️⚠️⚠️\nSomething went wrong !\nplease try to change your prompt or contact the admin !"
 before_generate_info="🤖Generating🤖"
 download_pic_notify="🤖Loading picture🤖"
@@ -368,4 +371,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-        
