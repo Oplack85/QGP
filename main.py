@@ -306,14 +306,12 @@ async def main():
 
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = True
-            await gemini(bot,message,m)
             await gemini_pro(bot,message,m)
         else:
             if default_model_dict[str(message.from_user.id)]:
-                await gemini(bot,message,m)
                 await gemini_pro(bot,message,m)
             else:
-                await gemini_pro(bot,message,m)
+                await gemini(bot,message,m)
 
 
     @bot.message_handler(content_types=["photo"])
