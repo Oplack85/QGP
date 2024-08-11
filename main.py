@@ -7,7 +7,7 @@ import telebot
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import  Message
 
-gemini_flash_player_dict = {}
+gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
 error_info="✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
@@ -18,7 +18,7 @@ n = 30  #Number of historical records to keep
 
 generation_config = {
     "temperature": 1.2,
-    "top_p": 0.9,
+    "top_p": 1,
     "top_k": 50,
     "max_output_tokens": 4096,
 }
@@ -133,7 +133,7 @@ def escape(text, flag=0):
     return text
 
 # Prevent "create_convo" function from blocking the event loop.
-async def make_new_gemini_flash_convo():
+async def make_new_gemini_convo():
     loop = asyncio.get_running_loop()
 
     def create_convo():
@@ -154,7 +154,7 @@ async def make_new_gemini_pro_convo():
 
     def create_convo():
         model = genai.GenerativeModel(
-            model_name="gemini-pro",
+            model_name="gemini-1.5-pro",
             generation_config=generation_config,
             safety_settings=safety_settings,
         )
@@ -182,11 +182,11 @@ async def async_generate_content(model, contents):
 
 async def gemini(bot,message,m):
     player = None
-    if str(message.from_user.id) not in gemini_flash_player_dict:
-        player = await make_new_gemini_flash_convo()
-        gemini_flash_player_dict[str(message.from_user.id)] = player
+    if str(message.from_user.id) not in gemini_player_dict:
+        player = await make_new_gemini_convo()
+        gemini_player_dict[str(message.from_user.id)] = player
     else:
-        player = gemini_flash_player_dict[str(message.from_user.id)]
+        player = gemini_player_dict[str(message.from_user.id)]
     if len(player.history) > n:
         player.history = player.history[2:]
     try:
@@ -238,8 +238,8 @@ async def main():
     await bot.set_my_commands(
         commands=[
             telebot.types.BotCommand("start", "لتشغيل البوت "),
+            telebot.types.BotCommand("gemini", "لأستخدام اصدار Gemini flash"),
             telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار Gemini pro"),
-            telebot.types.BotCommand("gemini_flash", "لأستخدام اصدار Gemini 1.5 flash"),
             telebot.types.BotCommand("clear", "لمسح سجل الاسئلة"),
             telebot.types.BotCommand("switch","لمعرفة الاصدار المستخدم")
         ],
@@ -254,14 +254,14 @@ async def main():
         except IndexError:
             await bot.reply_to(message, error_info)
 
-    @bot.message_handler(commands=["gemini_flash"])
+    @bot.message_handler(commands=["gemini"])
     async def gemini_handler(message: Message):
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
             await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال** { `/gemini من هو انشتاين` }\n\n **Gemini Flash **"), parse_mode="MarkdownV2")
             return
-        await gemini_flash(bot,message,m)
+        await gemini(bot,message,m)
 
     @bot.message_handler(commands=["gemini_pro"])
     async def gemini_handler(message: Message):
@@ -275,8 +275,8 @@ async def main():
     @bot.message_handler(commands=["clear"])
     async def gemini_handler(message: Message):
         # Check if the player is already in gemini_player_dict.
-        if (str(message.from_user.id) in gemini_flash_player_dict):
-            del gemini_flash_player_dict[str(message.from_user.id)]
+        if (str(message.from_user.id) in gemini_player_dict):
+            del gemini_player_dict[str(message.from_user.id)]
         if (str(message.from_user.id) in gemini_pro_player_dict):
             del gemini_pro_player_dict[str(message.from_user.id)]
         await bot.reply_to( message , escape("**✎┊‌ تم تنضيف السجل ✓**"), parse_mode="MarkdownV2")
@@ -306,10 +306,10 @@ async def main():
 
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = True
-            await gemini_flash(bot,message,m)
+            await gemini(bot,message,m)
         else:
             if default_model_dict[str(message.from_user.id)]:
-                await gemini_flash(bot,message,m)
+                await gemini(bot,message,m)
             else:
                 await gemini_pro(bot,message,m)
 
