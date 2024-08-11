@@ -12,7 +12,7 @@ gemini_pro_player_dict = {}
 default_model_dict = {}
 error_info="✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
 before_generate_info="✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
-download_pic_notify="✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲  ⏳"
+download_pic_notify="✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲 ⏳"
 
 n = 30  #Number of historical records to keep
 
@@ -259,7 +259,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ تم الان تشغيل اصدار Gemini Flash ✓**"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار \n اكتب الامر + السؤال \n مثال { `/gemini من هو انشتاين` }\n\n Gemini Flash **"), parse_mode="MarkdownV2")
             return
         await gemini(bot,message,m)
 
@@ -268,7 +268,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ تم الان تشغيل اصدار Gemini Pro ✓**"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار \n اكتب الامر + السؤال \n مثال { `/gemini_pro من هو انشتاين` }\n\n Gemini pro **"), parse_mode="MarkdownV2")
             return
         await gemini_pro(bot,message,m)
             
@@ -279,8 +279,8 @@ async def main():
             del gemini_player_dict[str(message.from_user.id)]
         if (str(message.from_user.id) in gemini_pro_player_dict):
             del gemini_pro_player_dict[str(message.from_user.id)]
-        await bot.reply_to(message, "** ✎┊‌ تم تنضيف السجل ✓ **")
-
+        await bot.reply_to( message , escape("**✎┊‌ تم تنضيف السجل ✓**"), parse_mode="MarkdownV2")
+        
     @bot.message_handler(commands=["switch"])
     async def gemini_handler(message: Message):
         if message.chat.type != "private":
@@ -289,14 +289,14 @@ async def main():
         # Check if the player is already in default_model_dict.
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Pro **")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
             return
         if default_model_dict[str(message.from_user.id)] == True:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Pro **")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
         else:
             default_model_dict[str(message.from_user.id)] = True
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Flash **")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
         
     
     
