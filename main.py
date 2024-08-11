@@ -6,11 +6,6 @@ import re
 import telebot
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message
-import os
-
-# Set environment variables (for demonstration purposes; avoid in production)
-os.environ['TELEGRAM_TOKEN'] = '7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo'
-os.environ['GOOGLE_GEMINI_KEY'] = 'AIzaSyBytHaZDwFzOhtsvDXJOOX7p2WCs7-jWC0'
 
 gemini_player_dict = {}
 gemini_pro_player_dict = {}
@@ -30,20 +25,32 @@ generation_config = {
 }
 
 safety_settings = [
-    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_NONE"
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_NONE"
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_NONE"
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_NONE"
+    },
 ]
 
-def find_all_index(str, pattern):
+def find_all_index(text, pattern):
     index_list = [0]
-    for match in re.finditer(pattern, str, re.MULTILINE):
-        if match.group(1) != None:
+    for match in re.finditer(pattern, text, re.MULTILINE):
+        if match.group(1) is not None:
             start = match.start(1)
             end = match.end(1)
             index_list += [start, end]
-    index_list.append(len(str))
+    index_list.append(len(text))
     return index_list
 
 def replace_all(text, pattern, function):
@@ -52,10 +59,10 @@ def replace_all(text, pattern, function):
     originstr = []
     poslist = find_all_index(text, pattern)
     for i in range(1, len(poslist[:-1]), 2):
-        start, end = poslist[i : i + 2]
+        start, end = poslist[i: i + 2]
         strlist.append(function(text[start:end]))
     for i in range(0, len(poslist), 2):
-        j, k = poslist[i : i + 2]
+        j, k = poslist[i: i + 2]
         originstr.append(text[j:k])
     if len(strlist) < len(originstr):
         strlist.append("")
@@ -186,7 +193,6 @@ async def gemini(bot, message, m):
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
-
     except Exception:
         traceback.print_exc()
         await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
@@ -198,7 +204,7 @@ async def gemini_pro(bot, message, m):
         gemini_pro_player_dict[str(message.from_user.id)] = player
     else:
         player = gemini_pro_player_dict[str(message.from_user.id)]
-if len(player.history) > n:
+    if len(player.history) > n:
         player.history = player.history[2:]
     try:
         sent_message = await bot.reply_to(message, before_generate_info)
@@ -207,23 +213,22 @@ if len(player.history) > n:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
-
     except Exception:
         traceback.print_exc()
         await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
 
 async def main():
-    # Retrieve environment variables
-    tg_token = os.getenv('TELEGRAM_TOKEN')
-    google_gemini_key = os.getenv('GOOGLE_GEMINI_KEY')
+    # Init args
+    parser = argparse.ArgumentParser()
+    parser.add_argument("tg_token", help="telegram token")
+    parser.add_argument("GOOGLE_GEMINI_KEY", help="Google Gemini API key")
+    options = parser.parse_args()
+    print("Arg parse done.")
 
-    if not tg_token or not google_gemini_key:
-        raise ValueError("Both TELEGRAM_TOKEN and GOOGLE_GEMINI_KEY environment variables must be set.")
-
-    genai.configure(api_key=google_gemini_key)
+    genai.configure(api_key=options.GOOGLE_GEMINI_KEY)
 
     # Init bot
-    bot = AsyncTeleBot(tg_token)
+    bot = AsyncTeleBot(options.tg_token)
     await bot.delete_my_commands(scope=None, language_code=None)
     await bot.set_my_commands(
         commands=[
@@ -273,7 +278,7 @@ async def main():
     @bot.message_handler(commands=["switch"])
     async def switch_handler(message: Message):
         if message.chat.type != "private":
-            await bot.reply_to(message, "This command is only for private chat!")
+            await bot.reply_to(message, "This command is only for private chat !")
             return
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = False
@@ -281,10 +286,10 @@ async def main():
             return
         if default_model_dict[str(message.from_user.id)]:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to(message, "Now you are using gemini-1.5-pro")
+            await bot.reply_to(message, "Now you are using gemini-1.5-flash")
         else:
             default_model_dict[str(message.from_user.id)] = True
-            await bot.reply_to(message, "Now you are using gemini-1.5-flash")
+            await bot.reply_to(message, "Now you are using gemini-1.5-pro")
 
     @bot.message_handler(func=lambda message: message.chat.type == "private", content_types=['text'])
     async def gemini_private_handler(message: Message):
@@ -299,10 +304,10 @@ async def main():
                 await gemini_pro(bot, message, m)
 
     @bot.message_handler(content_types=["photo"])
-    async def photo_handler(message: Message) -> None:
+    async def gemini_photo_handler(message: Message) -> None:
         if message.chat.type != "private":
             s = message.caption
-            if not s or not (s.startswith("/gemini")):
+            if not s or not s.startswith("/gemini"):
                 return
             try:
                 prompt = s.strip().split(maxsplit=1)[1].strip() if len(s.strip().split(maxsplit=1)) > 1 else ""
