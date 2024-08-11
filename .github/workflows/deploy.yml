@@ -27,5 +27,5 @@ jobs:
     - name: Run the main
       run: python main.py
       env:
-        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        GOOGLE_GEMINI_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
+        TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_BOT_API_KEY }}
