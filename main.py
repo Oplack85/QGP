@@ -10,7 +10,7 @@ from telebot.types import  Message
 gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
-error_info="✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ."
+error_info="**✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! **"
 before_generate_info="✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
 download_pic_notify="✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲  ⏳"
 
@@ -250,7 +250,7 @@ async def main():
     @bot.message_handler(commands=["start"])
     async def gemini_handler(message: Message):
         try:
-            await bot.reply_to( message , escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n*✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁*\n\n*تم التصنيع بواسطة* \n**المطور** [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n*المطور* [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"), parse_mode="MarkdownV2", disable_web_page_preview=True)
+            await bot.reply_to( message , escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n**✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁**\n\n**تم التصنيع بواسطة** \n**المطور** [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n**المطور** [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"), parse_mode="MarkdownV2", disable_web_page_preview=True)
         except IndexError:
             await bot.reply_to(message, error_info)
 
@@ -259,7 +259,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Flash ✓*"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ تم الان تشغيل اصدار Gemini Flash ✓**"), parse_mode="MarkdownV2")
             return
         await gemini(bot,message,m)
 
@@ -268,7 +268,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Pro ✓*"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ تم الان تشغيل اصدار Gemini Pro ✓**"), parse_mode="MarkdownV2")
             return
         await gemini_pro(bot,message,m)
             
@@ -279,7 +279,7 @@ async def main():
             del gemini_player_dict[str(message.from_user.id)]
         if (str(message.from_user.id) in gemini_pro_player_dict):
             del gemini_pro_player_dict[str(message.from_user.id)]
-        await bot.reply_to(message, "* ✎┊‌ تم تنضيف السجل ✓ *")
+        await bot.reply_to(message, "** ✎┊‌ تم تنضيف السجل ✓ **")
 
     @bot.message_handler(commands=["switch"])
     async def gemini_handler(message: Message):
@@ -289,14 +289,14 @@ async def main():
         # Check if the player is already in default_model_dict.
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "*✎┊‌ انت تستخدم اصدار Gemini Pro *")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Pro **")
             return
         if default_model_dict[str(message.from_user.id)] == True:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "*✎┊‌ انت تستخدم اصدار Gemini Pro *")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Pro **")
         else:
             default_model_dict[str(message.from_user.id)] = True
-            await bot.reply_to( message , "*✎┊‌ انت تستخدم اصدار Gemini Flash *")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Flash **")
         
     
     
