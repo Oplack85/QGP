@@ -18,7 +18,7 @@ n = 30  #Number of historical records to keep
 
 generation_config = {
     "temperature": 1.2,
-    "top_p": 0.9,
+    "top_p": 1,
     "top_k": 50,
     "max_output_tokens": 4096,
 }
@@ -138,7 +138,7 @@ async def make_new_gemini_convo():
 
     def create_convo():
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash-latest",
+            model_name="models/gemini-1.5-flash-latest",
             generation_config=generation_config,
             safety_settings=safety_settings,
         )
@@ -279,8 +279,7 @@ async def main():
             del gemini_player_dict[str(message.from_user.id)]
         if (str(message.from_user.id) in gemini_pro_player_dict):
             del gemini_pro_player_dict[str(message.from_user.id)]
-        await bot.reply_to(message, "** ✎┊‌ تم تنضيف السجل ✓ **")
-
+        await bot.reply_to( message , escape("**✎┊‌ تم تنضيف السجل ✓**"), parse_mode="MarkdownV2")
     @bot.message_handler(commands=["switch"])
     async def gemini_handler(message: Message):
         if message.chat.type != "private":
@@ -306,12 +305,13 @@ async def main():
 
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = True
-            await gemini(bot,message,m)
+            await gemini_pro(bot,message,m)
         else:
             if default_model_dict[str(message.from_user.id)]:
-                await gemini(bot,message,m)
-            else:
                 await gemini_pro(bot,message,m)
+                
+            else:
+                await gemini(bot,message,m)
 
 
     @bot.message_handler(content_types=["photo"])
