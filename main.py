@@ -10,13 +10,9 @@ from telebot.types import  Message
 gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
-
-tg_token = "7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo"
-GOOGLE_GEMINI_KEY = "AIzaSyBytHaZDwFzOhtsvDXJOOX7p2WCs7-jWC0"
-
-error_info="⚠️⚠️⚠️\nSomething went wrong !\nplease try to change your prompt or contact the admin !"
-before_generate_info="🤖Generating🤖"
-download_pic_notify="🤖Loading picture🤖"
+error_info="✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ."
+before_generate_info="✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
+download_pic_notify="✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲  ⏳"
 
 n = 30  #Number of historical records to keep
 
@@ -241,11 +237,11 @@ async def main():
     await bot.delete_my_commands(scope=None, language_code=None)
     await bot.set_my_commands(
         commands=[
-            telebot.types.BotCommand("start", "Start"),
-            telebot.types.BotCommand("gemini", "using gemini-1.5-flash"),
-            telebot.types.BotCommand("gemini_pro", "using gemini-1.5-pro"),
-            telebot.types.BotCommand("clear", "Clear all history"),
-            telebot.types.BotCommand("switch","switch default model")
+            telebot.types.BotCommand("start", "لتشغيل البوت "),
+            telebot.types.BotCommand("gemini", "لأستخدام اصدار gemini-1.5-flash"),
+            telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار gemini-1.5-pro"),
+            telebot.types.BotCommand("clear", "لمسح سجل الاسئلة"),
+            telebot.types.BotCommand("switch","لمعرفة الاصدار المستخدم")
         ],
     )
     print("Bot init done.")
@@ -254,7 +250,7 @@ async def main():
     @bot.message_handler(commands=["start"])
     async def gemini_handler(message: Message):
         try:
-            await bot.reply_to( message , escape("Welcome, you can ask me questions now. \nFor example: `Who is john lennon?`"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n*✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁*\n\n*تم التصنيع بواسطة* \n*المطور* [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n*المطور* [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"), parse_mode="MarkdownV2")
         except IndexError:
             await bot.reply_to(message, error_info)
 
@@ -263,7 +259,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("Please add what you want to say after /gemini. \nFor example: `/gemini Who is john lennon?`"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Flash ✓*"), parse_mode="MarkdownV2")
             return
         await gemini(bot,message,m)
 
@@ -272,7 +268,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("Please add what you want to say after /gemini_pro. \nFor example: `/gemini_pro Who is john lennon?`"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("*✎┊‌ تم الان تشغيل اصدار Gemini Pro ✓*"), parse_mode="MarkdownV2")
             return
         await gemini_pro(bot,message,m)
             
@@ -283,7 +279,7 @@ async def main():
             del gemini_player_dict[str(message.from_user.id)]
         if (str(message.from_user.id) in gemini_pro_player_dict):
             del gemini_pro_player_dict[str(message.from_user.id)]
-        await bot.reply_to(message, "Your history has been cleared")
+        await bot.reply_to(message, "* ✎┊‌ تم تنضيف السجل ✓ *")
 
     @bot.message_handler(commands=["switch"])
     async def gemini_handler(message: Message):
@@ -293,14 +289,14 @@ async def main():
         # Check if the player is already in default_model_dict.
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "Now you are using gemini-1.5-pro")
+            await bot.reply_to( message , "*✎┊‌ انت تستخدم اصدار Gemini Pro *")
             return
         if default_model_dict[str(message.from_user.id)] == True:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "Now you are using gemini-1.5-pro")
+            await bot.reply_to( message , "*✎┊‌ انت تستخدم اصدار Gemini Pro *")
         else:
             default_model_dict[str(message.from_user.id)] = True
-            await bot.reply_to( message , "Now you are using gemini-1.5-flash")
+            await bot.reply_to( message , "*✎┊‌ انت تستخدم اصدار Gemini Flash *")
         
     
     
@@ -371,3 +367,4 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
+        
