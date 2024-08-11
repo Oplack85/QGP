@@ -7,7 +7,7 @@ import telebot
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import  Message
 
-gemini_player_dict = {}
+gemini_flash_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
 error_info="✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
@@ -18,7 +18,7 @@ n = 30  #Number of historical records to keep
 
 generation_config = {
     "temperature": 1.2,
-    "top_p": 1,
+    "top_p": 0.9,
     "top_k": 50,
     "max_output_tokens": 4096,
 }
@@ -182,9 +182,9 @@ async def async_generate_content(model, contents):
 
 async def gemini(bot,message,m):
     player = None
-    if str(message.from_user.id) not in gemini_player_dict:
+    if str(message.from_user.id) not in gemini_flash_player_dict:
         player = await make_new_gemini_flash_convo()
-        gemini_player_dict[str(message.from_user.id)] = player
+        gemini_flash_player_dict[str(message.from_user.id)] = player
     else:
         player = gemini_flash_player_dict[str(message.from_user.id)]
     if len(player.history) > n:
