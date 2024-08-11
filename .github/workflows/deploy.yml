@@ -27,5 +27,5 @@ jobs:
     - name: Run the main
       run: bash start
       env:
-        GOOGLE_GEMINI_KEY: ${{ secrets.AIzaSyBytHaZDwFzOhtsvDXJOOX7p2WCs7-jWC0 }}
-        tg_token: ${{ secrets.7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo }}
+        GOOGLE_GEMINI_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
+        tg_token: ${{ secrets.tg_token }}
