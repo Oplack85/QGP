@@ -1,5 +1,5 @@
 telethon
-openai
+openai==0.28
 telebot
 datetime
 google-generativeai
