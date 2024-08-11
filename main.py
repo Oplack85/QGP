@@ -10,7 +10,7 @@ from telebot.types import  Message
 gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
-error_info="**✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! **"
+error_info="✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
 before_generate_info="✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
 download_pic_notify="✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲  ⏳"
 
@@ -279,7 +279,8 @@ async def main():
             del gemini_player_dict[str(message.from_user.id)]
         if (str(message.from_user.id) in gemini_pro_player_dict):
             del gemini_pro_player_dict[str(message.from_user.id)]
-        await bot.reply_to( message , escape("**✎┊‌ تم تنضيف السجل ✓**"), parse_mode="MarkdownV2")
+        await bot.reply_to(message, "** ✎┊‌ تم تنضيف السجل ✓ **")
+
     @bot.message_handler(commands=["switch"])
     async def gemini_handler(message: Message):
         if message.chat.type != "private":
@@ -305,13 +306,14 @@ async def main():
 
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = True
+            await gemini(bot,message,m)
             await gemini_pro(bot,message,m)
         else:
             if default_model_dict[str(message.from_user.id)]:
-                await gemini_pro(bot,message,m)
-                
-            else:
                 await gemini(bot,message,m)
+                await gemini_pro(bot,message,m)
+            else:
+                await gemini_pro(bot,message,m)
 
 
     @bot.message_handler(content_types=["photo"])
