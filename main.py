@@ -238,8 +238,8 @@ async def main():
     await bot.set_my_commands(
         commands=[
             telebot.types.BotCommand("start", "لتشغيل البوت "),
-            telebot.types.BotCommand("gemini", "لأستخدام اصدار gemini-1.5-flash"),
-            telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار gemini-1.5-pro"),
+            telebot.types.BotCommand("Flash", "لأستخدام اصدار gemini-1.5-flash"),
+            telebot.types.BotCommand("Pro", "لأستخدام اصدار gemini-1.5-pro"),
             telebot.types.BotCommand("clear", "لمسح سجل الاسئلة"),
             telebot.types.BotCommand("switch","لمعرفة الاصدار المستخدم")
         ],
@@ -254,21 +254,21 @@ async def main():
         except IndexError:
             await bot.reply_to(message, error_info)
 
-    @bot.message_handler(commands=["gemini"])
+    @bot.message_handler(commands=["Flash"])
     async def gemini_handler(message: Message):
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ تم الان تشغيل اصدار Gemini Flash ✓**"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار \n اكتب الامر + السؤال \n مثال { `/Flash من هو انشتاين` }\n\n Gemini Flash **"), parse_mode="MarkdownV2")
             return
         await gemini(bot,message,m)
 
-    @bot.message_handler(commands=["gemini_pro"])
-    async def gemini_handler(message: Message):
+    @bot.message_handler(commands=["Pro"])
+    async def gemini_pro_handler(message: Message):
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ تم الان تشغيل اصدار Gemini Pro ✓**"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار \n اكتب الامر + السؤال \n مثال { `/Pro من هو انشتاين` }\n\n Gemini Flash **"), parse_mode="MarkdownV2")
             return
         await gemini_pro(bot,message,m)
             
@@ -289,14 +289,14 @@ async def main():
         # Check if the player is already in default_model_dict.
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Pro **")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
             return
         if default_model_dict[str(message.from_user.id)] == True:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Pro **")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
         else:
             default_model_dict[str(message.from_user.id)] = True
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini Flash **")
+            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
         
     
     
@@ -306,12 +306,13 @@ async def main():
 
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = True
-            await gemini_pro(bot,message,m)
+            await gemini(bot,message,m)
         else:
             if default_model_dict[str(message.from_user.id)]:
-                await gemini_pro(bot,message,m)
+            await gemini(bot,message,m)
+                
             else:
-                await gemini(bot,message,m)
+            await gemini_pro(bot,message,m)
 
 
     @bot.message_handler(content_types=["photo"])
