@@ -138,7 +138,7 @@ async def make_new_gemini_convo():
 
     def create_convo():
         model = genai.GenerativeModel(
-            model_name="models/gemini-1.5-flash-latest",
+            model_name="gemini-1.5-flash",
             generation_config=generation_config,
             safety_settings=safety_settings,
         )
@@ -238,8 +238,8 @@ async def main():
     await bot.set_my_commands(
         commands=[
             telebot.types.BotCommand("start", "لتشغيل البوت "),
-            telebot.types.BotCommand("gemini", "لأستخدام اصدار gemini-1.5-flash"),
-            telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار gemini-1.5-pro"),
+            telebot.types.BotCommand("gemini", "لأستخدام اصدار Gemini 1.5 flash"),
+            telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار Gemini 1.5 pro"),
             telebot.types.BotCommand("clear", "لمسح سجل الاسئلة"),
             telebot.types.BotCommand("switch","لمعرفة الاصدار المستخدم")
         ],
@@ -259,7 +259,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار \n اكتب الامر + السؤال \n مثال { `/gemini من هو انشتاين` }\n\n Gemini Flash **"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال** { `/gemini من هو انشتاين` }\n\n **Gemini Flash **"), parse_mode="MarkdownV2")
             return
         await gemini(bot,message,m)
 
@@ -268,7 +268,7 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار \n اكتب الامر + السؤال \n مثال { `/gemini_pro من هو انشتاين` }\n\n Gemini pro **"), parse_mode="MarkdownV2")
+            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال **{ `/gemini_pro من هو انشتاين` }\n\n** Gemini pro **"), parse_mode="MarkdownV2")
             return
         await gemini_pro(bot,message,m)
             
