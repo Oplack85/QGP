@@ -2,6 +2,7 @@ telethon
 openai==0.28
 telebot
 datetime
+pyTelegramBotAPI==4.14.0
 google-generativeai
-pyTelegramBotAPI
+aiohttp
 python-telegram-bot
