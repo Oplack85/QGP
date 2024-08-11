@@ -6,7 +6,7 @@ import openai  # تحتاج لتثبيت هذه المكتبة بكتابة: pip
 api_id = "23970174"
 api_hash = "f1db2e38b2c73448ef09c504187e888d"
 bot_token = "7218686976:AAF9sDAr5tz8Nt_eMBoOl9-2RR6QsH5onTo"
-openai.api_key = "sk-proj-9ws35TnrOp5sE1LzwyiMT3BlbkFJ18CUr5JPY08sUBzjkHv5"
+openai.api_key = "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"
 
 
 client = TelegramClient('your_bot', api_id, api_hash).start(bot_token=bot_token)
