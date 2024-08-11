@@ -1,3 +1,5 @@
+telethon
+openai
 telebot
 datetime
 google-generativeai
