@@ -289,14 +289,14 @@ async def main():
         # Check if the player is already in default_model_dict.
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
+            await bot.reply_to( message , escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
             return
         if default_model_dict[str(message.from_user.id)] == True:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
+            await bot.reply_to( message , escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
         else:
             default_model_dict[str(message.from_user.id)] = True
-            await bot.reply_to( message , "**✎┊‌ انت تستخدم اصدار Gemini العادي **")
+            await bot.reply_to( message , escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
         
     
     
