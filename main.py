@@ -5,7 +5,7 @@ import google.generativeai as genai
 import re
 import telebot
 from telebot.async_telebot import AsyncTeleBot
-from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import  Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 gemini_player_dict = {}
 gemini_pro_player_dict = {}
@@ -28,8 +28,7 @@ safety_settings = [
         "category": "HARM_CATEGORY_HARASSMENT",
         "threshold": "BLOCK_NONE"
     },
-    {
-        "category": "HARM_CATEGORY_HATE_SPEECH",
+    {   "category": "HARM_CATEGORY_HATE_SPEECH",
         "threshold": "BLOCK_NONE"
     },
     {
@@ -42,14 +41,14 @@ safety_settings = [
     },
 ]
 
-def find_all_index(text, pattern):
+def find_all_index(str, pattern):
     index_list = [0]
-    for match in re.finditer(pattern, text, re.MULTILINE):
-        if match.group(1) is not None:
+    for match in re.finditer(pattern, str, re.MULTILINE):
+        if match.group(1) != None:
             start = match.start(1)
             end = match.end(1)
             index_list += [start, end]
-    index_list.append(len(text))
+    index_list.append(len(str))
     return index_list
 
 def replace_all(text, pattern, function):
@@ -58,10 +57,10 @@ def replace_all(text, pattern, function):
     originstr = []
     poslist = find_all_index(text, pattern)
     for i in range(1, len(poslist[:-1]), 2):
-        start, end = poslist[i:i + 2]
+        start, end = poslist[i : i + 2]
         strlist.append(function(text[start:end]))
     for i in range(0, len(poslist), 2):
-        j, k = poslist[i:i + 2]
+        j, k = poslist[i : i + 2]
         originstr.append(text[j:k])
     if len(strlist) < len(originstr):
         strlist.append("")
@@ -83,6 +82,9 @@ def escapeplus(text):
     return "\\" + text
 
 def escape(text, flag=0):
+    # In all other places characters
+    # _ * [ ] ( ) ~ ` > # + - = | { } . !
+    # must be escaped with the preceding character '\'.
     text = re.sub(r"\\\[", "@->@", text)
     text = re.sub(r"\\\]", "@<-@", text)
     text = re.sub(r"\\\(", "@-->@", text)
@@ -130,11 +132,7 @@ def escape(text, flag=0):
     text = re.sub(r"!", "\!", text)
     return text
 
-async def send_typing_action(bot, chat_id):
-    for _ in range(5):  # Adjust the range to change the "typing" duration
-        await bot.send_chat_action(chat_id, 'typing')
-        await asyncio.sleep(1)  # Delay between typing actions
-
+# Prevent "create_convo" function from blocking the event loop.
 async def make_new_gemini_convo():
     loop = asyncio.get_running_loop()
 
@@ -147,6 +145,7 @@ async def make_new_gemini_convo():
         convo = model.start_chat()
         return convo
 
+    # Run the synchronous "create_convo" function in a thread pool
     convo = await loop.run_in_executor(None, create_convo)
     return convo
 
@@ -162,13 +161,16 @@ async def make_new_gemini_pro_convo():
         convo = model.start_chat()
         return convo
 
+    # Run the synchronous "create_convo" function in a thread pool
     convo = await loop.run_in_executor(None, create_convo)
     return convo
 
+# Prevent "send_message" function from blocking the event loop.
 async def send_message(player, message):
     loop = asyncio.get_running_loop()
     await loop.run_in_executor(None, player.send_message, message)
-
+    
+# Prevent "model.generate_content" function from blocking the event loop.
 async def async_generate_content(model, contents):
     loop = asyncio.get_running_loop()
 
@@ -177,6 +179,12 @@ async def async_generate_content(model, contents):
 
     response = await loop.run_in_executor(None, generate)
     return response
+
+async def send_typing_action(bot, chat_id):
+    try:
+        await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
+    except Exception:
+        traceback.print_exc()
 
 async def gemini(bot, message, m):
     player = None
@@ -188,14 +196,13 @@ async def gemini(bot, message, m):
     if len(player.history) > n:
         player.history = player.history[2:]
     try:
-        await send_typing_action(bot, message.chat.id)  # Send typing action
+        await send_typing_action(bot, message.chat.id)
         sent_message = await bot.reply_to(message, before_generate_info)
         await send_message(player, m)
         try:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
-
     except Exception:
         traceback.print_exc()
         await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
@@ -210,40 +217,165 @@ async def gemini_pro(bot, message, m):
     if len(player.history) > n:
         player.history = player.history[2:]
     try:
-        await send_typing_action(bot, message.chat.id)  # Send typing action
+        await send_typing_action(bot, message.chat.id)
         sent_message = await bot.reply_to(message, before_generate_info)
         await send_message(player, m)
         try:
-            response = await async_generate_content(player, m)
-            await bot.edit_message_text(escape(response), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
+            await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
-
     except Exception:
         traceback.print_exc()
         await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
 
-def main():
+async def main():
+    # Init args
     parser = argparse.ArgumentParser()
-    parser.add_argument('token', help='Telegram bot token')
-    args = parser.parse_args()
-    bot = AsyncTeleBot(args.token)
+    parser.add_argument("tg_token", help="telegram token")
+    parser.add_argument("GOOGLE_GEMINI_KEY", help="Google Gemini API key")
+    options = parser.parse_args()
+    print("Arg parse done.")
 
-    @bot.message_handler(commands=['start'])
-    async def start(message: Message):
-        await bot.reply_to(message, "مرحبا! أرسل لي رسالة وسأقوم بالرد عليها.")
+    genai.configure(api_key=options.GOOGLE_GEMINI_KEY)
 
-    @bot.message_handler(commands=['gemini'])
-    async def gemini_command(message: Message):
-        m = message.text[len('/gemini '):]
+    # Init bot
+    bot = AsyncTeleBot(options.tg_token)
+    await bot.delete_my_commands(scope=None, language_code=None)
+    await bot.set_my_commands(
+        commands=[
+            telebot.types.BotCommand("start", "لتشغيل البوت "),
+            telebot.types.BotCommand("gemini", "لأستخدام اصدار Gemini flash"),
+            telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار Gemini pro"),
+            telebot.types.BotCommand("clear", "لمسح سجل الاسئلة"),
+            telebot.types.BotCommand("switch","لمعرفة الاصدار المستخدم")
+        ],
+    )
+    print("Bot init done.")
+
+    # Init commands
+    @bot.message_handler(commands=["start"])
+    async def start_handler(message: Message):
+        try:
+            # Create the "Subscribe" button
+            keyboard = InlineKeyboardMarkup()
+            subscribe_button = InlineKeyboardButton(text="𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ✍🏻", url="https://t.me/Scorpion_scorp")  # Replace with your actual subscription link
+            keyboard.add(subscribe_button)
+            
+            await bot.reply_to(
+                message,
+                escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n**✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁**\n\n**تم التصنيع بواسطة** \n**المطور** [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n**المطور** [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"),
+                parse_mode="MarkdownV2",
+                disable_web_page_preview=True,
+                reply_markup=keyboard
+            )
+        except IndexError:
+            await bot.reply_to(message, error_info)
+
+    @bot.message_handler(commands=["gemini"])
+    async def gemini_handler(message: Message):
+        try:
+            m = message.text.strip().split(maxsplit=1)[1].strip()
+        except IndexError:
+            await bot.reply_to(message, escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال** { `/gemini من هو انشتاين` }\n\n **Gemini Flash **"), parse_mode="MarkdownV2")
+            return
         await gemini(bot, message, m)
 
-    @bot.message_handler(commands=['gemini_pro'])
-    async def gemini_pro_command(message: Message):
-        m = message.text[len('/gemini_pro '):]
+    @bot.message_handler(commands=["gemini_pro"])
+    async def gemini_pro_handler(message: Message):
+        try:
+            m = message.text.strip().split(maxsplit=1)[1].strip()
+        except IndexError:
+            await bot.reply_to(message, escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال **{ `/gemini_pro من هو انشتاين` }\n\n** Gemini pro **"), parse_mode="MarkdownV2")
+            return
         await gemini_pro(bot, message, m)
+            
+    @bot.message_handler(commands=["clear"])
+    async def clear_handler(message: Message):
+        if str(message.from_user.id) in gemini_player_dict:
+            del gemini_player_dict[str(message.from_user.id)]
+        if str(message.from_user.id) in gemini_pro_player_dict:
+            del gemini_pro_player_dict[str(message.from_user.id)]
+        await bot.reply_to(message, escape("**✎┊‌ تم تنضيف السجل ✓**"), parse_mode="MarkdownV2")
+        
+    @bot.message_handler(commands=["switch"])
+    async def switch_handler(message: Message):
+        if message.chat.type != "private":
+            await bot.reply_to(message, "This command is only for private chat !")
+            return
+        if str(message.from_user.id) not in default_model_dict:
+            default_model_dict[str(message.from_user.id)] = False
+            await bot.reply_to(message, escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
+            return
+        if default_model_dict[str(message.from_user.id)]:
+            default_model_dict[str(message.from_user.id)] = False
+            await bot.reply_to(message, escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
+        else:
+            default_model_dict[str(message.from_user.id)] = True
+            await bot.reply_to(message, escape("**✎┊‌ انت تستخدم اصدار Gemini برو **"), parse_mode="MarkdownV2")
+        
+    @bot.message_handler(func=lambda message: message.chat.type == "private", content_types=['text'])
+    async def gemini_private_handler(message: Message):
+        m = message.text.strip()
 
-    bot.polling()
+        if str(message.from_user.id) not in default_model_dict:
+            default_model_dict[str(message.from_user.id)] = True
+            await gemini(bot, message, m)
+        else:
+            if default_model_dict[str(message.from_user.id)]:
+                await gemini(bot, message, m)
+            else:
+                await gemini_pro(bot, message, m)
 
-if __name__ == "__main__":
-    main()
+    @bot.message_handler(content_types=["photo"])
+    async def gemini_photo_handler(message: Message) -> None:
+        if message.chat.type != "private":
+            s = message.caption
+            if not s or not (s.startswith("/gemini")):
+                return
+            try:
+                prompt = s.strip().split(maxsplit=1)[1].strip() if len(s.strip().split(maxsplit=1)) > 1 else ""
+                file_path = await bot.get_file(message.photo[-1].file_id)
+                sent_message = await bot.reply_to(message, download_pic_notify)
+                downloaded_file = await bot.download_file(file_path.file_path)
+            except Exception:
+                traceback.print_exc()
+                await bot.reply_to(message, error_info)
+            model = genai.GenerativeModel("gemini-1.5-flash-latest")
+            contents = {
+                "parts": [{"mime_type": "image/jpeg", "data": downloaded_file}, {"text": prompt}]
+            }
+            try:
+                await bot.edit_message_text(before_generate_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+                response = await async_generate_content(model, contents)
+                await bot.edit_message_text(response.text, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+            except Exception:
+                traceback.print_exc()
+                await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+        else:
+            s = message.caption if message.caption else ""
+            try:
+                prompt = s.strip()
+                file_path = await bot.get_file(message.photo[-1].file_id)
+                sent_message = await bot.reply_to(message, download_pic_notify)
+                downloaded_file = await bot.download_file(file_path.file_path)
+            except Exception:
+                traceback.print_exc()
+                await bot.reply_to(message, error_info)
+            model = genai.GenerativeModel("gemini-pro-vision")
+            contents = {
+                "parts": [{"mime_type": "image/jpeg", "data": downloaded_file}, {"text": prompt}]
+            }
+            try:
+                await bot.edit_message_text(before_generate_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+                response = await async_generate_content(model, contents)
+                await bot.edit_message_text(response.text, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+            except Exception:
+                traceback.print_exc()
+                await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+
+    # Start bot
+    print("Starting Gemini_Telegram_Bot.")
+    await bot.polling(none_stop=True)
+
+if __name__ == '__main__':
+    asyncio.run(main())
