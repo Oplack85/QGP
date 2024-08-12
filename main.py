@@ -191,10 +191,6 @@ async def gemini(bot, message, m):
         player.history = player.history[2:]
     try:
         sent_message = await bot.reply_to(message, before_generate_info)
-        
-        for _ in range(5):  # Adjust the range to change the "typing" duration
-        bot.send_chat_action(message.chat.id, 'typing')
-        
         await send_message(player, m)
         try:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
@@ -216,10 +212,6 @@ async def gemini_pro(bot, message, m):
         player.history = player.history[2:]
     try:
         sent_message = await bot.reply_to(message, before_generate_info)
-        
-        for _ in range(5):  # Adjust the range to change the "typing" duration
-        bot.send_chat_action(message.chat.id, 'typing')
-        
         await send_message(player, m)
         try:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
