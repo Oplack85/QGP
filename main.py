@@ -6,7 +6,7 @@ import re
 import telebot
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import  Message, InlineKeyboardMarkup, InlineKeyboardButton
-from telebot import types
+
 gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
@@ -180,12 +180,6 @@ async def async_generate_content(model, contents):
     response = await loop.run_in_executor(None, generate)
     return response
 
-async def send_typing_action(bot, chat_id):
-    try:
-        await bot.send_chat_action(chat_id, types.ChatActions.TYPING)
-    except Exception:
-        traceback.print_exc()
-
 async def gemini(bot, message, m):
     player = None
     if str(message.from_user.id) not in gemini_player_dict:
@@ -196,13 +190,13 @@ async def gemini(bot, message, m):
     if len(player.history) > n:
         player.history = player.history[2:]
     try:
-        await send_typing_action(bot, message.chat.id)
         sent_message = await bot.reply_to(message, before_generate_info)
         await send_message(player, m)
         try:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+
     except Exception:
         traceback.print_exc()
         await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
@@ -217,13 +211,13 @@ async def gemini_pro(bot, message, m):
     if len(player.history) > n:
         player.history = player.history[2:]
     try:
-        await send_typing_action(bot, message.chat.id)
         sent_message = await bot.reply_to(message, before_generate_info)
         await send_message(player, m)
         try:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id, parse_mode="MarkdownV2")
         except:
             await bot.edit_message_text(escape(player.last.text), chat_id=sent_message.chat.id, message_id=sent_message.message_id)
+
     except Exception:
         traceback.print_exc()
         await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
