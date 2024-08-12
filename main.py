@@ -5,16 +5,16 @@ import google.generativeai as genai
 import re
 import telebot
 from telebot.async_telebot import AsyncTeleBot
-from telebot.types import  Message
+from telebot.types import  Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
-error_info="✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
-before_generate_info="✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
-download_pic_notify="✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲 ⏳"
+error_info = "✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
+before_generate_info = "✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
+download_pic_notify = "✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲 ⏳"
 
-n = 30  #Number of historical records to keep
+n = 30  # Number of historical records to keep
 
 generation_config = {
     "temperature": 1.2,
@@ -180,7 +180,7 @@ async def async_generate_content(model, contents):
     response = await loop.run_in_executor(None, generate)
     return response
 
-async def gemini(bot,message,m):
+async def gemini(bot, message, m):
     player = None
     if str(message.from_user.id) not in gemini_player_dict:
         player = await make_new_gemini_convo()
@@ -201,7 +201,7 @@ async def gemini(bot,message,m):
         traceback.print_exc()
         await bot.edit_message_text(error_info, chat_id=sent_message.chat.id, message_id=sent_message.message_id)
 
-async def gemini_pro(bot,message,m):
+async def gemini_pro(bot, message, m):
     player = None
     if str(message.from_user.id) not in gemini_pro_player_dict:
         player = await make_new_gemini_pro_convo()
@@ -248,9 +248,20 @@ async def main():
 
     # Init commands
     @bot.message_handler(commands=["start"])
-    async def gemini_handler(message: Message):
+    async def start_handler(message: Message):
         try:
-            await bot.reply_to( message , escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n**✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁**\n\n**تم التصنيع بواسطة** \n**المطور** [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n**المطور** [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"), parse_mode="MarkdownV2", disable_web_page_preview=True)
+            # Create the "Subscribe" button
+            keyboard = InlineKeyboardMarkup()
+            subscribe_button = InlineKeyboardButton(text="𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ✍🏻", url="https://t.me/Scorpion_scorp")  # Replace with your actual subscription link
+            keyboard.add(subscribe_button)
+            
+            await bot.reply_to(
+                message,
+                escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n**✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁**\n\n**تم التصنيع بواسطة** \n**المطور** [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n**المطور** [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"),
+                parse_mode="MarkdownV2",
+                disable_web_page_preview=True,
+                reply_markup=keyboard
+            )
         except IndexError:
             await bot.reply_to(message, error_info)
 
@@ -259,60 +270,55 @@ async def main():
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال** { `/gemini من هو انشتاين` }\n\n **Gemini Flash **"), parse_mode="MarkdownV2")
+            await bot.reply_to(message, escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال** { `/gemini من هو انشتاين` }\n\n **Gemini Flash **"), parse_mode="MarkdownV2")
             return
-        await gemini(bot,message,m)
+        await gemini(bot, message, m)
 
     @bot.message_handler(commands=["gemini_pro"])
-    async def gemini_handler(message: Message):
+    async def gemini_pro_handler(message: Message):
         try:
             m = message.text.strip().split(maxsplit=1)[1].strip()
         except IndexError:
-            await bot.reply_to( message , escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال **{ `/gemini_pro من هو انشتاين` }\n\n** Gemini pro **"), parse_mode="MarkdownV2")
+            await bot.reply_to(message, escape("**✎┊‌ حته تكدر تستخدم هذا الاصدار** \n** اكتب الامر + السؤال **\n **مثال **{ `/gemini_pro من هو انشتاين` }\n\n** Gemini pro **"), parse_mode="MarkdownV2")
             return
-        await gemini_pro(bot,message,m)
+        await gemini_pro(bot, message, m)
             
     @bot.message_handler(commands=["clear"])
-    async def gemini_handler(message: Message):
-        # Check if the player is already in gemini_player_dict.
-        if (str(message.from_user.id) in gemini_player_dict):
+    async def clear_handler(message: Message):
+        if str(message.from_user.id) in gemini_player_dict:
             del gemini_player_dict[str(message.from_user.id)]
-        if (str(message.from_user.id) in gemini_pro_player_dict):
+        if str(message.from_user.id) in gemini_pro_player_dict:
             del gemini_pro_player_dict[str(message.from_user.id)]
-        await bot.reply_to( message , escape("**✎┊‌ تم تنضيف السجل ✓**"), parse_mode="MarkdownV2")
+        await bot.reply_to(message, escape("**✎┊‌ تم تنضيف السجل ✓**"), parse_mode="MarkdownV2")
         
     @bot.message_handler(commands=["switch"])
-    async def gemini_handler(message: Message):
+    async def switch_handler(message: Message):
         if message.chat.type != "private":
-            await bot.reply_to( message , "This command is only for private chat !")
+            await bot.reply_to(message, "This command is only for private chat !")
             return
-        # Check if the player is already in default_model_dict.
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
+            await bot.reply_to(message, escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
             return
-        if default_model_dict[str(message.from_user.id)] == True:
+        if default_model_dict[str(message.from_user.id)]:
             default_model_dict[str(message.from_user.id)] = False
-            await bot.reply_to( message , escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
+            await bot.reply_to(message, escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
         else:
             default_model_dict[str(message.from_user.id)] = True
-            await bot.reply_to( message , escape("**✎┊‌ انت تستخدم اصدار Gemini العادي **"), parse_mode="MarkdownV2")
+            await bot.reply_to(message, escape("**✎┊‌ انت تستخدم اصدار Gemini برو **"), parse_mode="MarkdownV2")
         
-    
-    
     @bot.message_handler(func=lambda message: message.chat.type == "private", content_types=['text'])
     async def gemini_private_handler(message: Message):
         m = message.text.strip()
 
         if str(message.from_user.id) not in default_model_dict:
             default_model_dict[str(message.from_user.id)] = True
-            await gemini(bot,message,m)
+            await gemini(bot, message, m)
         else:
             if default_model_dict[str(message.from_user.id)]:
-                await gemini(bot,message,m)
+                await gemini(bot, message, m)
             else:
-                await gemini_pro(bot,message,m)
-
+                await gemini_pro(bot, message, m)
 
     @bot.message_handler(content_types=["photo"])
     async def gemini_photo_handler(message: Message) -> None:
