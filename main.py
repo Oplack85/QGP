@@ -238,6 +238,7 @@ async def main():
     await bot.set_my_commands(
         commands=[
             telebot.types.BotCommand("start", "لتشغيل البوت "),
+            telebot.types.BotCommand("Gpt", "ذكاء اصطناعي اصدار سريع"),
             telebot.types.BotCommand("gemini", "لأستخدام اصدار Gemini flash"),
             telebot.types.BotCommand("gemini_pro", "لأستخدام اصدار Gemini pro"),
             telebot.types.BotCommand("clear", "لمسح سجل الاسئلة"),
