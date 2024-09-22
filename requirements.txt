@@ -6,3 +6,8 @@ pyTelegramBotAPI==4.14.0
 google-generativeai
 aiohttp
 python-telegram-bot
+tensorflow
+torch
+scikit-learn
+transformers
+opencv-python
