@@ -11,8 +11,8 @@ gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
 error_info = "✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
-before_generate_info = "✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
-download_pic_notify = "✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲 ⏳"
+before_generate_info = ""
+download_pic_notify = ""
 
 n = 30  # Number of historical records to keep
 
@@ -248,18 +248,9 @@ async def main():
 
     # Init commands
     @bot.message_handler(commands=["start"])
-async def start_handler(message: Message):
-    # Remove the welcome message
-    # await bot.reply_to(
-    #     message,
-    #     escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)..."),
-    #     parse_mode="MarkdownV2",
-    #     disable_web_page_preview=True,
-    #     reply_markup=keyboard
-    # )
-    await bot.reply_to(message, "")
-
-
+    async def start_handler(message: Message):
+    # أزل المحتوى الموجود هنا أو اترك الدالة فارغة
+    pass
     @bot.message_handler(commands=["gemini"])
     async def gemini_handler(message: Message):
         try:
@@ -368,4 +359,3 @@ async def start_handler(message: Message):
 
 if __name__ == '__main__':
     asyncio.run(main())
-            
