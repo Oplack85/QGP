@@ -11,7 +11,7 @@ gemini_player_dict = {}
 gemini_pro_player_dict = {}
 default_model_dict = {}
 error_info = "✎┊‌ حدث خطأ يرجى صياغة السؤال بشكل صحيح ! "
-before_generate_info = "✎┊‌ 𝗪𝗮𝗶𝘁 𝗺𝗲 ⏳"
+before_generate_info = ""
 download_pic_notify = "✎┊‌ 𝘄𝗮𝗶𝘁 𝗽𝗶𝗰𝘁𝘂𝗿𝗲 ⏳"
 
 n = 30  # Number of historical records to keep
@@ -247,23 +247,6 @@ async def main():
     print("Bot init done.")
 
     # Init commands
-    @bot.message_handler(commands=["start"])
-    async def start_handler(message: Message):
-        try:
-            # Create the "Subscribe" button
-            keyboard = InlineKeyboardMarkup()
-            subscribe_button = InlineKeyboardButton(text="𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗖𝗵𝗮𝗻𝗻𝗲𝗹 ✍🏻", url="https://t.me/Scorpion_scorp")  # Replace with your actual subscription link
-            keyboard.add(subscribe_button)
-            
-            await bot.reply_to(
-                message,
-                escape("[𝗦𝗰𝗼𝗿𝗽𝗶𝗼𝗻 𝗚𝗣𝗧 𝟰 | 𝗚𝗲𝗺𝗶𝗻𝗶](t.me/ScorGPTbot)\n\n**✎┊‌ أهلاً بك في بوت الذكاء الاصطناعي الخاص بسورس العقرب. يمكنك طرح أي سؤال أو طلب، وسنكون سعداء بالإجابة عليه إن شاء الله 😁**\n\n**تم التصنيع بواسطة** \n**المطور** [ 𝗠𝗼𝗵𝗮𝗺𝗲𝗱 ](t.me/Zo_r0)\n**المطور** [𝗔𝗹𝗹𝗼𝘂𝘀𝗵](t.me/I_e_e_l)"),
-                parse_mode="MarkdownV2",
-                disable_web_page_preview=True,
-                reply_markup=keyboard
-            )
-        except IndexError:
-            await bot.reply_to(message, error_info)
 
     @bot.message_handler(commands=["gemini"])
     async def gemini_handler(message: Message):
