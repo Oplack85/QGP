@@ -249,8 +249,7 @@ async def main():
     # Init commands
     @bot.message_handler(commands=["start"])
     async def start_handler(message: Message):
-    # أزل المحتوى الموجود هنا أو اترك الدالة فارغة
-    pass
+
     @bot.message_handler(commands=["gemini"])
     async def gemini_handler(message: Message):
         try:
